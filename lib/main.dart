@@ -21,10 +21,12 @@ class RandomWords extends StatefulWidget {
 class RandomWordsState extends State<RandomWords> {
 
   final _suggestions = <WordPair>[];
+  final _saved = new Set<WordPair>();//点赞，喜欢的内容
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   Widget _buildSuggestions() {
     return new ListView.builder(
+      padding: const EdgeInsets.all(15.0),
       itemBuilder: (context, i) {
         if (i.isOdd) return new Divider();//分割线
         final index = i ~/ 2;//向下取整，可以计算出除去分割线后的实际数量
@@ -38,11 +40,25 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair pair) {
+    final alreadySaved = _saved.contains(pair);
     return new ListTile(
       title: new Text(
         pair.asPascalCase,
         style: _biggerFont,
       ),
+      trailing: new Icon(
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null,
+      ),
+      onTap: () {
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(pair);
+          } else {
+            _saved.add(pair);
+          }
+        });
+      },
     );
   }
 
